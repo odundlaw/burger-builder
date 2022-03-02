@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Layout from './hoc/Layout/Layout';
+import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
+import Checkout from './containers/checkout/Checkout';
+import { Route, Routes } from 'react-router';
+import ContactData from './containers/checkout/contactData/ContactData';
+import Orders from './containers/Orders/Orders';
+
+class App extends Component {
+  render(){
+    return(
+      <div>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<BurgerBuilder />} />
+            <Route path="/checkout" element={<Checkout />} >
+              <Route path="/checkout/contact-data" element={<ContactData />} />
+            </Route>
+            <Route path="/orders" element={<Orders />} />
+          </Route>
+        </Routes>
+      </div>
+    )
+  }
 }
 
 export default App;
