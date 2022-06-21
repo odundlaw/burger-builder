@@ -1,6 +1,9 @@
 import React from "react";
 import Modal from "../../components/UI/Modal/Modal";
 import Wrapper from "../Wrapper/Wrapper";
+import axios from "axios";
+
+const cancelToken = axios.CancelToken.source();
 
 const WithError = (Component, axios) => {
   return class extends Component {
@@ -11,6 +14,7 @@ const WithError = (Component, axios) => {
     componentWillMount() {
       this.reqInterceptor = axios.interceptors.request.use((req) => {
         this.setState({ error: null });
+        req.cancelToken = cancelToken.token;
         return req;
       });
 

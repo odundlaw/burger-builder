@@ -9,9 +9,11 @@ const Toolbar = (props) => {
   return (
     <header className={classes.Toolbar}>
       <SideDrawerToggle clicked={props.hanburgerClicked} />
-      <div className={classes.Logo}><Logo /></div>
+      <div className={classes.Logo}>
+        <Logo />
+      </div>
       <nav className={classes.DesktopOnly}>
-          <NavigationItems />
+        <NavigationItems user={props.user} signOut={props.signOut} />
       </nav>
     </header>
   );

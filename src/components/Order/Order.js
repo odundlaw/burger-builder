@@ -1,5 +1,6 @@
 import React from "react";
 import { objToIterables } from "../../utils/utils";
+import TimeAgo from "../TimeAgo/TimeAgo";
 
 import classes from "./Order.module.css";
 
@@ -24,10 +25,16 @@ function Order(props) {
   return (
     <div className={classes.Order}>
       <p>Ingredients: {ingredientList}</p>
-      <p>
-        Total Price:{" "}
-        <strong>USD {Number.parseFloat(props.total).toFixed()}</strong>
-      </p>
+      <div className={classes.flexOrder}>
+        <p>
+          Total Price:{" "}
+          <strong>USD {Number.parseFloat(props.total).toFixed()}</strong>
+        </p>
+        <TimeAgo time={props.timeAgo} />
+        <button onClick={props.deleteOrder}>
+          Delete Order
+        </button>
+      </div>
     </div>
   );
 }

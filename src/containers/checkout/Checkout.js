@@ -1,57 +1,42 @@
+import { compose } from "@reduxjs/toolkit";
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { Outlet } from "react-router";
 import CheckoutSummary from "../../components/Order/CheckoutSummary/CheckoutSummary";
-import Spinner from "../../components/UI/Spinner/Spinner";
+/* import Spinner from "../../components/UI/Spinner/Spinner"; */
 import WithRouter from "../../hoc/Layout/WithRouter/WithRouter";
-import { searcParamsToObject } from "../../utils/utils";
 
 class Checkout extends Component {
-  state = {
-    ingredients: null,
-    totalPrice: 0,
-    disableBtn: false,
-  };
-
-  componentDidMount() {
-    const params = this.props.searchParams;
-    const [ingredients, totalPrice] = searcParamsToObject(params);
-    this.setState({ ingredients: ingredients, totalPrice: totalPrice });
-  }
-
   checkoutCancelHandler = () => {
-    const from = this.props.location.state?.from?.pathname || "/";
-    const [ingredients, totalPrice] = searcParamsToObject(
-      this.props.searchParams
-    );
-    this.props.navigate(from, {
-      state: { ingredients: ingredients, totalPrice: totalPrice },
-    });
+    this.props.navigate("/checkout");
   };
 
   checkoutContinueHandler = () => {
-    this.setState({ disableBtn: true });
-    this.props.navigate(
-      `${this.props.location.pathname}/contact-data${this.props.location.search}`,
-      { replace: true }
-    );
+    const { isLoggedIn } = this.props.user;
+    const { navigate } = this.props;
+    const from = "/checkout/contact-data";
+    if (!isLoggedIn) {
+      return navigate("/auth", { state: { from: from } });
+    }
+    navigate(from, { replace: true });
+  };
+
+  redirectIfNoIngredient = () => {
+    this.props.navigate("/");
   };
 
   render() {
-    const contextObject = {
-      ingredients: this.state.ingredients,
-      totalPrice: this.state.totalPrice,
-    };
-    let summary = <Spinner />;
-    if (this.state.ingredients) {
+    const { Redirect } = this.props;
+    let summary = <Redirect to="/" />;
+    if (this.props.burger.ingredients) {
       summary = (
         <>
           <CheckoutSummary
-            ingredients={this.state.ingredients}
+            ingredients={this.props.burger.ingredients}
             checkoutContinue={this.checkoutContinueHandler}
             checkoutCancel={this.checkoutCancelHandler}
-            disableBtn={this.state.disableBtn}
           />
-          <Outlet context={contextObject} />
+          <Outlet />
         </>
       );
     }
@@ -59,4 +44,11 @@ class Checkout extends Component {
   }
 }
 
-export default WithRouter(Checkout);
+const mapStateToProps = (state) => {
+  return {
+    burger: state.ingredients,
+    user: state.user,
+  };
+};
+
+export default compose(connect(mapStateToProps), WithRouter)(Checkout);

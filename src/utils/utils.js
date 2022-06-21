@@ -42,3 +42,27 @@ export const checkValidity = (value, rules) => {
 
   return isValid;
 };
+
+export const toastConfigureObj = {
+  position: "top-right",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  toastId: "success1",
+};
+
+export const sortArray = (unSortedArray) => {
+  const array = [...unSortedArray];
+  return array.sort((a, b) => {
+    if (new Date(a.date).getTime() > new Date(b.date).getTime()) {
+      return -1;
+    } 
+    if (new Date(a.date).getTime() < new Date(b.date).getTime()) {
+      return 1;
+    } 
+    return 0;
+  });
+};

@@ -9,7 +9,7 @@ const OrderSummary = (props) => {
       {props.ingredients[igKey]}
     </li>
   ));
-  console.log(ingredientSummary)
+  //console.log(ingredientSummary)
   return (
     <div>
       <Wrapper>
