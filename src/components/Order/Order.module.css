@@ -2,7 +2,30 @@
     width: 80%;
     border: 1px solid #eee;
     box-shadow: 0 2px 3px #ccc;
-    padding: 10px;
+    padding: 10px 20px;
     margin: 10px auto;
     box-sizing: border-box;
+}
+
+.Order button {
+    padding: 8px;
+    background:transparent;
+    border: none;
+    color: sandybrown;
+    border-radius: 2px;
+    cursor: pointer;
+    box-shadow: inset;
+}
+
+.Order button:hover{
+    background: rgb(234, 126, 31);
+    color: white;
+    transition: 0.2s ease-in-out;
+}
+
+.flexOrder{
+    display:flex;
+    width:80%;
+    justify-content: space-between;
+    align-items: center;
 }

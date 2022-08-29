@@ -1,19 +1,20 @@
 import { compose } from "@reduxjs/toolkit";
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import axios from "../../../axios-orders";
 import Button from "../../../components/UI/Button/Button";
 import Inputs from "../../../components/UI/Inputs/Inputs";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import WithRouter from "../../../hoc/Layout/WithRouter/WithRouter";
 import WithError from "../../../hoc/WithError/WithError";
+import { addOrders } from "../../../redux/reducers/orders";
+import { setIngredientsToDefault } from "../../../redux/reducers/ingredients";
 import { checkValidity } from "../../../utils/utils";
 
 import classes from "./ContactData.module.css";
 
 class ContactData extends Component {
   state = {
-    ingredients: null,
-    totalPrice: 0,
     loading: false,
     orderForm: {
       name: {
@@ -103,31 +104,69 @@ class ContactData extends Component {
   };
 
   componentDidMount() {
-    const { ingredients, totalPrice } = this.props.outletContext;
-    this.setState({ ingredients: ingredients, totalPrice: totalPrice });
+    const { isLoggedIn, email, displayName } = this.props.user;
+    if (isLoggedIn) {
+      this.setState((prevState) => {
+        const copiedOrderFormObject = {
+          ...prevState.orderForm,
+          name: {
+            value: displayName ? displayName : "",
+            valid: displayName ? true : false,
+            elementConfig: {
+              readOnly: displayName ? true : false,
+              placeholder: !displayName ? "Enter your Full Name" : "",
+            },
+            validation: {
+              required: true,
+              validationMsg: "Name can't be Empty",
+            },
+          },
+          email: {
+            value: email ? email : "",
+            valid: email ? true : false,
+            elementConfig: {
+              readOnly: true,
+            },
+          },
+        };
+        return {
+          ...prevState,
+          orderForm: copiedOrderFormObject,
+        };
+      });
+    }
   }
 
-  orderHandler = (event) => {
+  orderHandler = async (event) => {
     event.preventDefault();
+    this.setState({ loading: true });
     const orderDetails = {};
+    const { accessToken } = this.props.user;
     for (let key in this.state.orderForm) {
       orderDetails[key] = this.state.orderForm[key].value;
     }
     const order = {
-      ingredients: this.state.ingredients,
-      totalPrice: this.state.totalPrice,
-      customer: orderDetails,
+      orderData: {
+        ingredients: this.props.burger.ingredients,
+        totalPrice: this.props.burger.totalPrice,
+        customer: orderDetails,
+        date: new Date().toISOString(),
+      },
+      accessToken: accessToken,
     };
 
-    axios
-      .post("/orders.json", order)
-      .then((response) => {
-        this.setState({ loading: false, ingredients: null, totalPrice: 0 });
-        this.props.navigate("/", { replace: true });
-      })
-      .catch((error) => {
-        this.setState({ loading: false });
+    try {
+      await this.props.addOrders(order).unwrap();
+      this.setState({
+        loading: false /* ingredients: null, totalPrice: 0 */,
       });
+      if (this.props.setIngredientsToDefault()) {
+        this.props.navigate("/orders", { replace: true });
+      }
+    } catch (err) {
+      this.setState({ loading: false });
+      console.log(err);
+    }
   };
 
   inputChangeHandler = (event, elementIdentifier) => {
@@ -179,7 +218,9 @@ class ContactData extends Component {
               );
             })}
 
-            <Button btnType="Success" disabled={!formIsvalid}>ORDER NOW!</Button>
+            <Button btnType="Success" disabled={!formIsvalid}>
+              ORDER NOW!
+            </Button>
           </form>
         )}
       </div>
@@ -187,4 +228,20 @@ class ContactData extends Component {
   }
 }
 
-export default compose(WithRouter, WithError)(ContactData, axios);
+const mapStateToProps = (state) => {
+  return {
+    burger: state.ingredients,
+    user: state.user,
+  };
+};
+
+const mapDispatchToProps = () => ({
+  addOrders,
+  setIngredientsToDefault,
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps()),
+  WithRouter,
+  WithError
+)(ContactData, axios);

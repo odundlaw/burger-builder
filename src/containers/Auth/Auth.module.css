@@ -1,0 +1,43 @@
+.Authentication {
+    margin: 20px auto;
+    width: 40%;
+    text-align: center;
+    box-sizing: border-box;
+    box-shadow: 0 2px 2px #ccc;
+    padding: 10px;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.LoginFormWrapper{
+    width: 100%;
+    padding: 10px
+}
+
+.googleSignInBtn{
+    padding: 10px;
+    background: rgb(42, 124, 42);
+    border: 1px solid rgb(75, 118, 10);
+    color: white;
+    border-radius:1px;
+    border-radius: 2px;
+    width:90%;
+    border: thin solid #888;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    cursor: pointer;
+    box-shadow:0 2px 2px 2px rgb(236, 236, 236);
+    font-size: 14px
+}
+
+form {
+    width: 90%;
+    padding: 10px;
+}
+
+@media(min-width:600px) {
+    .ContactData {
+        width: 500px;
+    }
+}
